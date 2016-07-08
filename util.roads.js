@@ -53,8 +53,8 @@ var roads = {
                 room.createConstructionSite(pos.x, pos.y, STRUCTURE_ROAD);
             }
         } else {
-            console.log('No suitable road locations found');
-            console.log(JSON.stringify(Memory.roads));
+            // console.log('No suitable road locations found');
+            // console.log(JSON.stringify(Memory.roads));
         }
     },
     clear: function() {

@@ -43,6 +43,7 @@ var harvester = {
                     } else if (dest instanceof StructureContainer &&
                             dest.energy < dest.energyCapacity) {
                         target = base;
+                        break;
                     } else if (dest instanceof StructureController && !target) {
                         target = base;
                     }

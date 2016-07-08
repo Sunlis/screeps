@@ -124,7 +124,7 @@ var creeputil = {
         if (!creep.memory.target) return false;
         var spec = creep.memory.targetSpec;
         var target = Game.getObjectById(creep.memory.target);
-        if (creep.memory.path) {
+        if (creep.memory.path && creep.memory.path != '') {
             if (typeof(creep.memory.path) != 'string') {
                 creeputil.log(
                     creep, options,
@@ -169,7 +169,7 @@ var creeputil = {
             var result = module[spec.action](creep, target, spec);
             if (result == creeputil.OK) {
                 // action was successful and they're not done, clear path.
-                creep.memory.path = null;
+                creep.memory.path = "";
             } else if (result == creeputil.DONE) {
                 creeputil.log(creep, options, 'clearing for finished creep action');
                 creeputil.clear_(creep);

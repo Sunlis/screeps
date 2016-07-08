@@ -8,6 +8,7 @@ var idle = function(creep) {
     if (!flag) {
         return false;
     }
+    creep.say('idling');
     return creep.moveTo(flag);
 };
 

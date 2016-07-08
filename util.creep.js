@@ -8,7 +8,7 @@ var creeputil = {
             if (opt_obj) {
                 args.push(opt_obj);
             }
-            console.log.call(this, args);
+            console.log.apply(this, args);
             creep.say(message);
         }
     },

@@ -72,7 +72,7 @@ var creeputil = {
         if (!creep.memory.target) return false;
         var target = Game.getObjectById(creep.memory.target);
         if (!target) {
-            creeputil.clear_(creep);
+            creeputil.clear_(creep, options);
             return;
         }
         return {
@@ -86,7 +86,7 @@ var creeputil = {
         var target = Game.getObjectById(creep.memory.target);
         if (creep.memory.path) {
             if (!(creep.memory.path instanceof String)) {
-                creeputil.clear_(creep);
+                creeputil.clear_(creep, options);
                 return;
             }
             var path = Room.deserializePath(creep.memory.path);
@@ -110,10 +110,10 @@ var creeputil = {
         if ((!creep.memory.path || creep.memory.path.length == 0) && spec && spec.action) {
             var result = module[spec.action](creep, target, spec);
             if (result == creeputil.DONE) {
-                creeputil.clear_(creep);
+                creeputil.clear_(creep, options);
                 creeputil.log(creep, options, 'action done');
             } else if (result == creeputil.ERROR) {
-                creeputil.clear_(creep);
+                creeputil.clear_(creep, options);
                 creeputil.log(creep, options, 'action error');
             }
         } else {
@@ -122,11 +122,12 @@ var creeputil = {
             } else if (!spec.action) {
                 creeputil.log(creep, options, 'no spec.action');
             }
-            creeputil.clear_(creep);
+            creeputil.clear_(creep, options);
         }
         return true;
     },
-    clear_: function(creep) {
+    clear_: function(creep, options) {
+        creeputil.log(creep, options, 'clear');
         creep.memory.target = null;
         creep.memory.targetSpec = null;
         creep.memory.path = null;

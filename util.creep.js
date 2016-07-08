@@ -72,6 +72,7 @@ var creeputil = {
         if (!creep.memory.target) return false;
         var target = Game.getObjectById(creep.memory.target);
         if (!target) {
+            creeputil.log(creep, options, 'clearing for missing/invalid target in path search');
             creeputil.clear_(creep, options);
             return;
         }
@@ -86,6 +87,7 @@ var creeputil = {
         var target = Game.getObjectById(creep.memory.target);
         if (creep.memory.path) {
             if (!(creep.memory.path instanceof String)) {
+                creeputil.log(creep, options, 'clearing for malformed path');
                 creeputil.clear_(creep, options);
                 return;
             }
@@ -110,9 +112,11 @@ var creeputil = {
         if ((!creep.memory.path || creep.memory.path.length == 0) && spec && spec.action) {
             var result = module[spec.action](creep, target, spec);
             if (result == creeputil.DONE) {
+                creeputil.log(creep, options, 'clearing for finished creep action');
                 creeputil.clear_(creep, options);
                 creeputil.log(creep, options, 'action done');
             } else if (result == creeputil.ERROR) {
+                creeputil.log(creep, options, 'clearing for creep action error');
                 creeputil.clear_(creep, options);
                 creeputil.log(creep, options, 'action error');
             }
@@ -122,12 +126,12 @@ var creeputil = {
             } else if (!spec.action) {
                 creeputil.log(creep, options, 'no spec.action');
             }
+            creeputil.log(creep, options, 'clearing for bad creep spec');
             creeputil.clear_(creep, options);
         }
         return true;
     },
     clear_: function(creep, options) {
-        creeputil.log(creep, options, 'clear');
         creep.memory.target = null;
         creep.memory.targetSpec = null;
         creep.memory.path = null;

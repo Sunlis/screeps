@@ -50,7 +50,8 @@ var builder = {
                 {
                     find: FIND_STRUCTURES,
                     condition: function(target) {
-                        return target.hits && target.hits < target.hitsMax;
+                        return target.structureType != STRUCTURE_ROAD &&
+                            target.hits && target.hits < target.hitsMax;
                     },
                     sort: function(target) {
                         return target.hits;

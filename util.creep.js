@@ -168,8 +168,9 @@ var creeputil = {
         } else {
             var result = module[spec.action](creep, target, spec);
             if (result == creeputil.OK) {
-                // action was successful and they're not done, clear path.
-                creep.memory.path = "";
+                creep.memory.path = _.padLeft(creep.pos.x, 2, '0') +
+                    _.padLeft(creep.pos.y, 2, '0');
+
             } else if (result == creeputil.DONE) {
                 creeputil.log(creep, options, 'clearing for finished creep action');
                 creeputil.clear_(creep);
@@ -217,10 +218,11 @@ module.exports = creeputil;
         {
             find: FIND_* constant,
             from: eg. Game.spawns,
-            condition: function(obj, creep) { return obj.isGood(); },
+            condition: function(obj) { return obj.isGood(); },
+            sort: function(obj) { return obj.index; },
             findOpts: { filter: function(obj){ return obj.needsWhatever(); } },
             pathOpts: Room.findPath opts,
-            action: function(creep, target, spec) { creep.harvest(); return done; }
+            action: 'harvest', //module.harvest()
         }
     ]
 }

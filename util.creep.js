@@ -1,7 +1,18 @@
 var find = require('util.find');
 var idle = require('util.idle');
 
+/**
+ * Generic framework for creep targetting, pathfinding, and actions.
+ * @type {Object}
+ */
 var creeputil = {
+    /**
+     * Logs a message to the console if `verbose` is enabled in the options.
+     * @param {!Creep} creep
+     * @param {!Object} options
+     * @param {string} message
+     * @param {*} opt_obj
+     */
     log: function(creep, options, message, opt_obj) {
         if (options.verbose) {
             console.log(creep.name, '-', message);
@@ -13,8 +24,10 @@ var creeputil = {
         }
     },
     /**
+     * Main run loop for a creep.
      * @param {!Creep} creep
      * @param {Object<string, *>} options
+     * @param {Object} module The creep spec containing the action callbacks.
      */
     run: function(creep, options, module) {
         if (options.target) {
@@ -47,8 +60,11 @@ var creeputil = {
         }
     },
     /**
+     * Finds a new target for the creep.
      * @param {!Creep} creep
      * @param {Object<string, *>} options
+     * @return {boolean|Object} An object containing a target ID and spec.
+     * @private
      */
     target_: function(creep, options) {
         for (var i in options.target) {
@@ -72,20 +88,38 @@ var creeputil = {
         }
         return false;
     },
+    /**
+     * Finds a new path for the creep.
+     * @param {!Creep} creep
+     * @param {Object<string, *>} options
+     * @return {boolean|Object} An object containing a serialized path.
+     * @private
+     */
     path_: function(creep, options) {
         if (!creep.memory.target) return false;
         var target = Game.getObjectById(creep.memory.target);
         if (!target) {
-            creeputil.log(creep, options, 'clearing for missing/invalid target in path search');
+            creeputil.log(
+                creep, options,
+                'clearing for missing/invalid target in path search');
             creeputil.clear_(creep);
-            return;
+            return false;
         }
-        var path = creep.pos.findPathTo(target, creep.memory.targetSpec.pathOpts);
+        var path = creep.pos.findPathTo(
+            target, creep.memory.targetSpec.pathOpts);
         var serialized = Room.serializePath(path);
         return {
             path: serialized,
         };
     },
+    /**
+     * Runs a creep's actions (move + build/repair/etc).
+     * @param {!Creep} creep
+     * @param {Object<string, *>} options
+     * @param {Object} module The creep spec containing the action callbacks.
+     * @return {boolean}
+     * @private
+     */
     action_: function(creep, options, module) {
         if (!creep.memory.target) return false;
         var spec = creep.memory.targetSpec;
@@ -141,12 +175,21 @@ var creeputil = {
                 creeputil.log(creep, options, 'clearing for creep action error');
                 creeputil.clear_(creep);
                 creeputil.log(creep, options, 'action error');
+            }
+            if (result != creeputil.OUT_OF_RANGE) {
+                // close enough, don't need to move anymore
+                creep.memory.path = null;
             } else {
                 // all good - creep will keep performing action
             }
         }
         return true;
     },
+    /**
+     * Clears the creep's memory of target/path information.
+     * @param {!Creep} creep
+     * @private
+     */
     clear_: function(creep) {
         creep.memory.target = null;
         creep.memory.targetSpec = null;
@@ -156,6 +199,7 @@ var creeputil = {
     DONE: 0,
     ERROR: 1,
     OK: 2,
+    OUT_OF_RANGE: 3,
 };
 
 module.exports = creeputil;

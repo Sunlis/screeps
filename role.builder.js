@@ -1,12 +1,24 @@
 var idle = require('util.idle');
 var creeputil = require('util.creep');
 
+/**
+ * Builder creep module.
+ * @type {Object}
+ */
 var builder = {
+    /**
+     * A list of priority construction types. Builders will complete these first
+     * before moving on to other construction sites.
+     * @type {!Array<string>}
+     */
     PRIORITY_SITES: [
         STRUCTURE_EXTENSION,
         STRUCTURE_CONTAINER,
     ],
-    /** @param {!Creep} */
+    /**
+     * Main run loop for builder creeps.
+     * @param {!Creep}
+     */
     run: function(creep) {
         if (creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
@@ -66,33 +78,58 @@ var builder = {
             target: target
         }, builder);
     },
+    /**
+     * Build callback for creeputil. Attempts to build the provided target.
+     * @param {!Creep} creep
+     * @param {!ConstructionSite} target
+     * @param {!Object} spec
+     * @return {number} A constant from util.creep (eg. DONE, ERROR)
+     */
     build: function(creep, target, spec) {
-        var result = creep.build(target);
-        if (result != OK && result != ERR_NOT_IN_RANGE) {
-            return creeputil.ERROR;
-        }
-        if (creep.carry.energy == 0 || target.progress == target.progressTotal) {
+        var result = builder.checkResult_(creep.build(target));
+        if (result) return result;
+
+        if (creep.carry.energy == 0 ||
+                target.progress == target.progressTotal) {
             return creeputil.DONE;
         }
     },
+    /**
+     * Harvest callback for creeputil. Attempts to harvest the provided target.
+     * @param {!Creep} creep
+     * @param {!RoomObject} target
+     * @param {!Object} spec
+     * @return {number} A constant from util.creep (eg. DONE, ERROR)
+     */
     harvest: function(creep, target, spec) {
-        var result = creep.harvest(target);
-        if (result != OK && result != ERR_NOT_IN_RANGE) {
-            return creeputil.ERROR;
-        }
+        var result = builder.checkResult_(creep.harvest(target));
+        if (result) return result;
+
         if (creep.carry.energy == creep.carryCapacity || target.energy == 0) {
             return creeputil.DONE;
         }
     },
+    /**
+     * Repair callback for creeputil. Attempts to repair the provided target.
+     * @param {!Creep} creep
+     * @param {!RoomObject} target
+     * @param {!Object} spec
+     * @return {number} A constant from util.creep (eg. DONE, ERROR)
+     */
     repair: function(creep, target, spec) {
-        var result = creep.repair(target);
-        if (result != OK && result != ERR_NOT_IN_RANGE) {
-            return creeputil.ERROR;
-        }
+        var result = builder.checkResult_(creep.repair(target));
+        if (result) return result;
+
         if (creep.carry.energy == 0 || target.hits == target.hitsMax) {
             return creeputil.DONE;
         }
     },
+
+    checkResult_: function(result) {
+        if (result == ERR_NOT_IN_RANGE) return creeputil.OUT_OF_RANGE;
+        if (result != OK) return creeputil.ERROR;
+        return null;
+    }
 };
 
 module.exports = builder;

@@ -2,6 +2,10 @@ var idle = require('util.idle');
 var creeputil = require('util.creep');
 
 var builder = {
+    PRIORITY_SITES = [
+        STRUCTURE_EXTENSION,
+        STRUCTURE_CONTAINER,
+    ],
     /** @param {!Creep} */
     run: function(creep) {
         if (creep.memory.building && creep.carry.energy == 0) {
@@ -10,24 +14,14 @@ var builder = {
         if (!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
             creep.memory.building = true;
         }
-        creeputil.run(creep, {
-            allowIdle: true,
-            target: [
-                {
-                    find: FIND_SOURCES,
-                    condition: function(target) {
-                        return !creep.memory.building && target.energy > 0;
-                    },
-                    sort: function(target) {
-                        return creep.pos.getRangeTo(target);
-                    },
-                    action: 'harvest',
-                },
+        var target;
+        if (creep.memory.building) {
+            target = [
                 {
                     find: FIND_MY_CONSTRUCTION_SITES,
                     condition: function(target) {
-                        return creep.memory.building &&
-                            target.structureType == STRUCTURE_EXTENSION;
+                        return _.includes(
+                            builder.PRIORITY_SITES, target.structureType);
                     },
                     sort: function(target) {
                         return target.progressTotal - target.progress;
@@ -36,9 +30,6 @@ var builder = {
                 },
                 {
                     find: FIND_MY_CONSTRUCTION_SITES,
-                    condition: function(target) {
-                        return creep.memory.building;
-                    },
                     sort: function(target) {
                         return target.progressTotal - target.progress;
                     },
@@ -47,18 +38,33 @@ var builder = {
                 {
                     find: FIND_STRUCTURES,
                     condition: function(target) {
-                        return creep.memory.building &&
-                            target.hits &&
-                            target.hits < target.hitsMax;
+                        return target.hits && target.hits < target.hitsMax;
                     },
                     sort: function(target) {
                         return target.hits;
                     },
                     action: 'repair',
+                }
+            ];
+        } else {
+            target = [
+                {
+                    find: FIND_SOURCES,
+                    condition: function(target) {
+                        return target.energy > 0;
+                    },
+                    sort: function(target) {
+                        return creep.pos.getRangeTo(target);
+                    },
+                    action: 'harvest',
                 },
-            ]
+            ];
+        }
+
+        creeputil.run(creep, {
+            allowIdle: true,
+            target: target
         }, builder);
-        return;
     },
     build: function(creep, target, spec) {
         var result = creep.build(target);

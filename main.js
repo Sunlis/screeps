@@ -8,7 +8,6 @@ var roads = require('util.roads');
 module.exports.loop = function() {
     init.init();
     roads.monitor();
-    roads.maybeBuild();
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
         if (!creep.memory.role) {
@@ -30,4 +29,5 @@ module.exports.loop = function() {
         }
         //console.log(creep.name, performance.now() - start);
     }
+    roads.maybeBuild();
 };

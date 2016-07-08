@@ -21,7 +21,7 @@ var creeputil = {
             if (!creep.memory.target) {
                 var result = creeputil.target_(creep, options);
                 if (result) {
-                    creeputil.log(creep, options, 'new target');
+                    creeputil.log(creep, options, 'new target', result);
                     creep.memory.target = result.target;
                     creep.memory.targetSpec = result.spec;
                 }

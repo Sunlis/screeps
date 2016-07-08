@@ -85,7 +85,7 @@ var creeputil = {
         var spec = creep.memory.targetSpec;
         var target = Game.getObjectById(creep.memory.target);
         if (creep.memory.path) {
-            if (!(creep.memory.path instanceof string)) {
+            if (!(creep.memory.path instanceof String)) {
                 creeputil.clear();
                 return;
             }

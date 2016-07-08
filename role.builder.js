@@ -87,12 +87,17 @@ var builder = {
      */
     build: function(creep, target, spec) {
         var result = builder.checkResult_(creep.build(target));
-        if (result) return result;
+        if (result) {
+            creep.say(creeputil.CODE_MAP[result]);
+            return result;
+        }
 
         if (creep.carry.energy == 0 ||
                 target.progress == target.progressTotal) {
+            creep.say('DONE');
             return creeputil.DONE;
         }
+        creep.say('OK');
         return creeputil.OK;
     },
     /**
@@ -132,7 +137,7 @@ var builder = {
         if (result == ERR_NOT_IN_RANGE) return creeputil.OUT_OF_RANGE;
         if (result != OK) return creeputil.ERROR;
         return null;
-    }
+    },
 };
 
 module.exports = builder;

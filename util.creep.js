@@ -199,6 +199,13 @@ var creeputil = {
     ERROR: 1,
     OK: 2,
     OUT_OF_RANGE: 3,
+
+    CODE_MAP: {
+        0: 'DONE',
+        1: 'ERROR',
+        2: 'OK',
+        3: 'OUT_OF_RANGE',
+    },
 };
 
 module.exports = creeputil;

@@ -26,7 +26,7 @@ var harvester = {
                 }
             } else {
                 var target;
-                var destinations = creep.room.find(FIND_MY_STRUCTURES);
+                var destinations = creep.room.find(FIND_STRUCTURES);
                 for (var i = 0; i < destinations.length; i++) {
                     var base = destinations[i];
                     var dest = Game.getObjectById(base.id);

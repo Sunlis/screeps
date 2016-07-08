@@ -82,8 +82,6 @@ var creeputil = {
         }
         var path = creep.pos.findPathTo(target, creep.memory.targetSpec.pathOpts);
         var serialized = Room.serializePath(path);
-        creeputil.log(creep, options, 'path', path);
-        creeputil.log(creep, options, 'serialized path', serialized);
         return {
             path: serialized,
         };

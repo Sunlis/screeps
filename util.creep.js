@@ -107,7 +107,6 @@ var creeputil = {
                 creeputil.log(creep, options, 'action error - clear');
             }
         } else {
-            creeputil.log(creep, options, JSON.stringify(spec));
             if (!spec) {
                 creeputil.log(creep, options, 'missing spec, clearing memory');
             } else if (!spec.action) {

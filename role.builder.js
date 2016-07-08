@@ -2,7 +2,7 @@ var idle = require('util.idle');
 var creeputil = require('util.creep');
 
 var builder = {
-    PRIORITY_SITES = [
+    PRIORITY_SITES: [
         STRUCTURE_EXTENSION,
         STRUCTURE_CONTAINER,
     ],

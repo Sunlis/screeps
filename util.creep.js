@@ -17,28 +17,28 @@ var creeputil = {
             if (!creep.memory.target) {
                 var result = creeputil.target_(creep, options);
                 if (result) {
-                    creeputil.log(creep, options, 'found new target');
+                    creeputil.log(creep, options, 'new target');
                     creep.memory.target = result.target;
                     creep.memory.targetSpec = result.spec;
                 }
             }
         } else if (options.allowIdle) {
-            creeputil.log(creep, options, 'no target spec - idling');
+            creeputil.log(creep, options, 'no spec');
             return idle(creep);
         }
         if (!creep.memory.path) {
             var result = creeputil.path_(creep, options);
             if (result) {
-                creeputil.log(creep, options, 'found new path');
+                creeputil.log(creep, options, 'new path');
                 creep.memory.path = result.path;
             }
         }
         if (!creep.memory.target || !creep.memory.path) {
-            creeputil.log(creep, options, 'missing target or path - idling');
+            creeputil.log(creep, options, 'no tar/path');
             return idle(creep);
         }
         if (!creeputil.action_(creep, options, module)) {
-            creeputil.log(creep, options, 'action failed - idling');
+            creeputil.log(creep, options, 'action fail');
             return idle(creep);
         }
     },
@@ -59,7 +59,7 @@ var creeputil = {
             if (spec.condition) match = _.filter(match, spec.condition);
             if (spec.sort) match = _.sortBy(match, spec.sort);
             if (match.length) {
-                creeputil.log(creep, options, 'found target with rule ' + i);
+                creeputil.log(creep, options, 'new tar ' + i);
                 return {
                     target: match[0],
                     spec: spec,
@@ -91,7 +91,7 @@ var creeputil = {
             } else if (move != ERR_BUSY && move != ERR_TIRED) {
                 creep.memory.path = null;
             } else {
-                creeputil.log(creep, options, 'move result: ' + move);
+                creeputil.log(creep, options, 'move: ' + move);
             }
             if (options.recalcPath) {
                 creep.memory.path = null;
@@ -104,13 +104,13 @@ var creeputil = {
                 creeputil.log(creep, options, 'action done');
             } else if (result == creeputil.ERROR) {
                 creeputil.clear_(creep);
-                creeputil.log(creep, options, 'action error - clear');
+                creeputil.log(creep, options, 'action error');
             }
         } else {
             if (!spec) {
-                creeputil.log(creep, options, 'missing spec, clearing memory');
+                creeputil.log(creep, options, 'no spec');
             } else if (!spec.action) {
-                creeputil.log(creep, options, 'missing spec.action, clearing memory');
+                creeputil.log(creep, options, 'no spec.action');
             }
             creeputil.clear_(creep);
         }

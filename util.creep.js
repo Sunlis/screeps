@@ -5,6 +5,7 @@ var creeputil = {
     log: function(creep, options, message) {
         if (options.verbose) {
             console.log(creep.name, '-', message);
+            creep.say(message);
         }
     },
     /**

@@ -12,6 +12,7 @@ var builder = {
         }
         creeputil.run(creep, {
             allowIdle: true,
+            verbose: true,
             target: [
                 {
                     find: FIND_SOURCES,

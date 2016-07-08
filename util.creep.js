@@ -85,6 +85,10 @@ var creeputil = {
         var spec = creep.memory.targetSpec;
         var target = Game.getObjectById(creep.memory.target);
         if (creep.memory.path) {
+            if (!(creep.memory.path instanceof string)) {
+                creeputil.clear();
+                return;
+            }
             var path = Room.deserializePath(creep.memory.path);
             var move = creep.move(path[0].direction);
             if (move == OK) {

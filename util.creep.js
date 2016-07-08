@@ -87,7 +87,7 @@ var creeputil = {
         var target = Game.getObjectById(creep.memory.target);
         if (creep.memory.path) {
             if (!(creep.memory.path instanceof String)) {
-                creeputil.log(creep, options, 'clearing for malformed path');
+                creeputil.log(creep, options, 'clearing for malformed path ' + JSON.stringify(creep.memory.path));
                 creeputil.clear_(creep, options);
                 return;
             }

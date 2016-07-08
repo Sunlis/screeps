@@ -6,8 +6,8 @@ var creeputil = {
         if (options.verbose) {
             console.log(creep.name, '-', message);
             if (opt_obj) {
-                console.log(JSON.stringify(opt_obj));
-                console.log(opt_obj);
+                console.log(message, JSON.stringify(opt_obj));
+                console.log(message, opt_obj);
             }
             creep.say(message);
         }

@@ -80,9 +80,13 @@ var creeputil = {
             creeputil.clear_(creep, options);
             return;
         }
+        var path = creep.room.findPath(
+                creep.pos, target.pos, creep.memory.targetSpec.pathOpts);
+        var serialized = Room.serializePath(path);
+        creeputil.log(creep, options, 'path', path);
+        creeputil.log(creep, options, 'serialized path', serialized);
         return {
-            path: Room.serializePath(creep.room.findPath(
-                creep.pos, target.pos, creep.memory.targetSpec.pathOpts)),
+            path: serialized,
         };
     },
     action_: function(creep, options, module) {

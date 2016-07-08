@@ -36,7 +36,7 @@ var init = {
             },
             {
                 name: 'harvester',
-                count: 8,
+                count: 10,
                 body: {
                     required: [WORK, MOVE, CARRY],
                     optional: [WORK, MOVE, CARRY],

@@ -63,7 +63,7 @@ var builder = {
     },
     build: function(creep, target, spec) {
         var result = creep.build(target);
-        if (result != OK) {
+        if (result != OK && result != ERR_NOT_IN_RANGE) {
             return creeputil.ERROR;
         }
         if (creep.carry.energy == 0 || target.progress == target.progressTotal) {
@@ -72,7 +72,7 @@ var builder = {
     },
     harvest: function(creep, target, spec) {
         var result = creep.harvest(target);
-        if (result != OK) {
+        if (result != OK && result != ERR_NOT_IN_RANGE) {
             return creeputil.ERROR;
         }
         if (creep.carry.energy == creep.carryCapacity || target.energy == 0) {
@@ -81,7 +81,7 @@ var builder = {
     },
     repair: function(creep, target, spec) {
         var result = creep.repair(target);
-        if (result != OK) {
+        if (result != OK && result != ERR_NOT_IN_RANGE) {
             return creeputil.ERROR;
         }
         if (creep.carry.energy == 0 || target.hits == target.hitsMax) {

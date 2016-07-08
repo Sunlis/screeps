@@ -100,11 +100,15 @@ var creeputil = {
                     'clearing for malformed path',
                     creep.memory.path);
                 creeputil.clear_(creep, options);
-                return;
+                return false;
             }
-            creeputil.log(creep, options, 'path', creep.memory.path);
-            var path = Room.deserializePath(creep.memory.path);
-            var move = creep.move(path[0].direction);
+            try {
+                var path = Room.deserializePath(creep.memory.path);
+            } catch(e) {
+                creeputil.log(creep, options, 'bad path', creep.memory);
+                return false;
+            }
+            var move = creep.moveByPath(path);
             if (move == OK) {
                 path.shift();
                 if (path.length == 0) {
@@ -121,7 +125,15 @@ var creeputil = {
                 creep.memory.path = null;
             }
         }
-        if (!creep.memory.path && spec && spec.action) {
+        if (!spec || !spec.action) {
+            if (!spec) {
+                creeputil.log(creep, options, 'no spec');
+            } else if (!spec.action) {
+                creeputil.log(creep, options, 'no spec.action');
+            }
+            creeputil.log(creep, options, 'clearing for bad creep spec', spec);
+            creeputil.clear_(creep, options);
+        } else {
             var result = module[spec.action](creep, target, spec);
             if (result == creeputil.DONE) {
                 creeputil.log(creep, options, 'clearing for finished creep action');
@@ -131,15 +143,9 @@ var creeputil = {
                 creeputil.log(creep, options, 'clearing for creep action error');
                 creeputil.clear_(creep, options);
                 creeputil.log(creep, options, 'action error');
+            } else {
+                // all good - creep will keep performing action
             }
-        } else if (creep.memory.path) {
-            if (!spec) {
-                creeputil.log(creep, options, 'no spec');
-            } else if (!spec.action) {
-                creeputil.log(creep, options, 'no spec.action');
-            }
-            creeputil.log(creep, options, 'clearing for bad creep spec', spec);
-            creeputil.clear_(creep, options);
         }
         return true;
     },
@@ -151,6 +157,7 @@ var creeputil = {
 
     DONE: 0,
     ERROR: 1,
+    OK: 2,
 };
 
 module.exports = creeputil;

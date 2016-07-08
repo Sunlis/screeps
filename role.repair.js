@@ -25,6 +25,17 @@ var repair = {
                     },
                     action: 'repair',
                 },
+                {
+                    find: FIND_STRUCTURES,
+                    condition: function(target) {
+                        return creep.carry.energy > 0 &&
+                            target.hits < target.hitsMax;
+                    },
+                    sort: function(target) {
+                        return target.hits;
+                    },
+                    action: 'repair',
+                },
                 // {
                 //     find: FIND_STRUCTURES,
                 //     condition: function(target) {

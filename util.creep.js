@@ -98,6 +98,7 @@ var creeputil = {
                 creeputil.clear_(creep, options);
                 return;
             }
+            creeputil.log(creep, options, 'path', creep.memory.path);
             var path = Room.deserializePath(creep.memory.path);
             var move = creep.move(path[0].direction);
             if (move == OK) {
@@ -116,7 +117,7 @@ var creeputil = {
                 creep.memory.path = null;
             }
         }
-        if ((!creep.memory.path || creep.memory.path.length == 0) && spec && spec.action) {
+        if (!creep.memory.path && spec && spec.action) {
             var result = module[spec.action](creep, target, spec);
             if (result == creeputil.DONE) {
                 creeputil.log(creep, options, 'clearing for finished creep action');
@@ -127,7 +128,7 @@ var creeputil = {
                 creeputil.clear_(creep, options);
                 creeputil.log(creep, options, 'action error');
             }
-        } else {
+        } else if (creep.memory.path) {
             if (!spec) {
                 creeputil.log(creep, options, 'no spec');
             } else if (!spec.action) {

@@ -167,7 +167,10 @@ var creeputil = {
             creeputil.clear_(creep);
         } else {
             var result = module[spec.action](creep, target, spec);
-            if (result == creeputil.DONE) {
+            if (result == creeputil.OK) {
+                // action was successful and they're not done, clear path.
+                creep.memory.path = null;
+            } else if (result == creeputil.DONE) {
                 creeputil.log(creep, options, 'clearing for finished creep action');
                 creeputil.clear_(creep);
                 creeputil.log(creep, options, 'action done');
@@ -175,10 +178,6 @@ var creeputil = {
                 creeputil.log(creep, options, 'clearing for creep action error');
                 creeputil.clear_(creep);
                 creeputil.log(creep, options, 'action error');
-            }
-            if (result != creeputil.OUT_OF_RANGE) {
-                // close enough, don't need to move anymore
-                creep.memory.path = null;
             } else {
                 // all good - creep will keep performing action
             }

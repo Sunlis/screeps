@@ -93,6 +93,7 @@ var builder = {
                 target.progress == target.progressTotal) {
             return creeputil.DONE;
         }
+        return creeputil.OK;
     },
     /**
      * Harvest callback for creeputil. Attempts to harvest the provided target.
@@ -108,6 +109,7 @@ var builder = {
         if (creep.carry.energy == creep.carryCapacity || target.energy == 0) {
             return creeputil.DONE;
         }
+        return creeputil.OK;
     },
     /**
      * Repair callback for creeputil. Attempts to repair the provided target.
@@ -123,6 +125,7 @@ var builder = {
         if (creep.carry.energy == 0 || target.hits == target.hitsMax) {
             return creeputil.DONE;
         }
+        return creeputil.OK;
     },
 
     checkResult_: function(result) {

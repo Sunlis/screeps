@@ -4,11 +4,11 @@ var idle = require('util.idle');
 var creeputil = {
     log: function(creep, options, message, opt_obj) {
         if (options.verbose) {
-            var args = [creep.name, '-', message];
+            console.log(creep.name, '-', message);
             if (opt_obj) {
-                args.push(opt_obj);
+                console.log(JSON.stringify(opt_obj));
+                console.log(opt_obj);
             }
-            console.log.apply(this, args);
             creep.say(message);
         }
     },

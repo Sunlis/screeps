@@ -61,7 +61,7 @@ var creeputil = {
             if (match.length) {
                 creeputil.log(creep, options, 'new tar ' + i);
                 return {
-                    target: match[0],
+                    target: match[0].id,
                     spec: spec,
                 };
             }
@@ -70,24 +70,30 @@ var creeputil = {
     },
     path_: function(creep, options) {
         if (!creep.memory.target) return false;
-        var target = Game.getObjectById(creep.memory.target.id);
+        var target = Game.getObjectById(creep.memory.target);
         if (!target) {
             creeputil.clear_(creep);
             return;
         }
         return {
-            path: creep.room.findPath(
-                creep.pos, target.pos, creep.memory.targetSpec.pathOpts),
+            path: creep.room.serializePath(creep.room.findPath(
+                creep.pos, target.pos, creep.memory.targetSpec.pathOpts)),
         };
     },
     action_: function(creep, options, module) {
         if (!creep.memory.target) return false;
         var spec = creep.memory.targetSpec;
-        var target = Game.getObjectById(creep.memory.target.id);
-        if (creep.memory.path && creep.memory.path.length) {
-            var move = creep.move(creep.memory.path[0].direction);
+        var target = Game.getObjectById(creep.memory.target);
+        if (creep.memory.path) {
+            var path = creep.room.deserializePath(creep.memory.path);
+            var move = creep.move(path[0].direction);
             if (move == OK) {
-                creep.memory.path.shift();
+                path.shift();
+                if (path.length == 0) {
+                    creep.memory.path = null;
+                } else {
+                    creep.memory.path = creep.room.serializePath(path);
+                }
             } else if (move != ERR_BUSY && move != ERR_TIRED) {
                 creep.memory.path = null;
             } else {

@@ -2,9 +2,13 @@ var find = require('util.find');
 var idle = require('util.idle');
 
 var creeputil = {
-    log: function(creep, options, message) {
+    log: function(creep, options, message, opt_obj) {
         if (options.verbose) {
-            console.log(creep.name, '-', message);
+            var args = [creep.name, '-', message];
+            if (opt_obj) {
+                args.push(opt_obj);
+            }
+            console.log.call(this, args);
             creep.say(message);
         }
     },
@@ -126,7 +130,7 @@ var creeputil = {
             } else if (!spec.action) {
                 creeputil.log(creep, options, 'no spec.action');
             }
-            creeputil.log(creep, options, 'clearing for bad creep spec');
+            creeputil.log(creep, options, 'clearing for bad creep spec', spec);
             creeputil.clear_(creep, options);
         }
         return true;

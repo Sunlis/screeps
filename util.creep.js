@@ -76,7 +76,7 @@ var creeputil = {
             return;
         }
         return {
-            path: creep.room.serializePath(creep.room.findPath(
+            path: Room.serializePath(creep.room.findPath(
                 creep.pos, target.pos, creep.memory.targetSpec.pathOpts)),
         };
     },
@@ -85,14 +85,14 @@ var creeputil = {
         var spec = creep.memory.targetSpec;
         var target = Game.getObjectById(creep.memory.target);
         if (creep.memory.path) {
-            var path = creep.room.deserializePath(creep.memory.path);
+            var path = Room.deserializePath(creep.memory.path);
             var move = creep.move(path[0].direction);
             if (move == OK) {
                 path.shift();
                 if (path.length == 0) {
                     creep.memory.path = null;
                 } else {
-                    creep.memory.path = creep.room.serializePath(path);
+                    creep.memory.path = Room.serializePath(path);
                 }
             } else if (move != ERR_BUSY && move != ERR_TIRED) {
                 creep.memory.path = null;

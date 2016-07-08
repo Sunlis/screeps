@@ -77,7 +77,7 @@ var creeputil = {
         var target = Game.getObjectById(creep.memory.target);
         if (!target) {
             creeputil.log(creep, options, 'clearing for missing/invalid target in path search');
-            creeputil.clear_(creep, options);
+            creeputil.clear_(creep);
             return;
         }
         var path = creep.pos.findPathTo(target, creep.memory.targetSpec.pathOpts);
@@ -98,13 +98,14 @@ var creeputil = {
                     creep, options,
                     'clearing for malformed path',
                     creep.memory.path);
-                creeputil.clear_(creep, options);
+                creeputil.clear_(creep);
                 return false;
             }
             try {
                 var path = Room.deserializePath(creep.memory.path);
             } catch(e) {
                 creeputil.log(creep, options, 'bad path', creep.memory);
+                creeputil.clear_(creep);
                 return false;
             }
             var move = creep.moveByPath(path);
@@ -131,16 +132,16 @@ var creeputil = {
                 creeputil.log(creep, options, 'no spec.action');
             }
             creeputil.log(creep, options, 'clearing for bad creep spec', spec);
-            creeputil.clear_(creep, options);
+            creeputil.clear_(creep);
         } else {
             var result = module[spec.action](creep, target, spec);
             if (result == creeputil.DONE) {
                 creeputil.log(creep, options, 'clearing for finished creep action');
-                creeputil.clear_(creep, options);
+                creeputil.clear_(creep);
                 creeputil.log(creep, options, 'action done');
             } else if (result == creeputil.ERROR) {
                 creeputil.log(creep, options, 'clearing for creep action error');
-                creeputil.clear_(creep, options);
+                creeputil.clear_(creep);
                 creeputil.log(creep, options, 'action error');
             } else {
                 // all good - creep will keep performing action
@@ -148,7 +149,7 @@ var creeputil = {
         }
         return true;
     },
-    clear_: function(creep, options) {
+    clear_: function(creep) {
         creep.memory.target = null;
         creep.memory.targetSpec = null;
         creep.memory.path = null;

@@ -13,6 +13,7 @@ var builder = {
      */
     PRIORITY_SITES: [
         STRUCTURE_EXTENSION,
+        STRUCTURE_TOWER,
         STRUCTURE_CONTAINER,
     ],
     /**

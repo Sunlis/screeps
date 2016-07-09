@@ -22,7 +22,7 @@ var init = {
             },
             {
                 name: 'builder',
-                count: 3,
+                count: 2,
                 body: {
                     required: [WORK, MOVE, CARRY],
                     optional: [WORK, MOVE],

@@ -135,6 +135,17 @@ var builder = {
         if (result != OK) return creeputil.ERROR;
         return null;
     },
+
+    getBuildSpec: function(counts) {
+        return {
+            name: 'builder',
+            count: 3,
+            body: {
+                required: [WORK, MOVE, CARRY],
+                optional: [WORK, MOVE],
+            },
+        };
+    },
 };
 
 module.exports = builder;

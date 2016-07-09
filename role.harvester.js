@@ -27,25 +27,30 @@ var harvester = {
             } else {
                 var target;
                 var destinations = creep.room.find(FIND_STRUCTURES);
-                for (var i = 0; i < destinations.length; i++) {
-                    var base = destinations[i];
-                    var dest = Game.getObjectById(base.id);
-                    if (dest instanceof StructureExtension &&
-                            dest.energy < dest.energyCapacity) {
-                        target = base;
+                var priorities = {};
+                priorities[STRUCTURE_EXTENSION] = 0;
+                priorities[STRUCTURE_TOWER] = 1;
+                priorities[STRUCTURE_SPAWN] = 2;
+                priorities[STRUCTURE_CONTAINER] = 3;
+                priorities[STRUCTURE_CONTROLLER] = 4;
+                destinations = _.sortBy(destinations, function(dest) {
+                    return priorities[dest.structureType];
+                });
+                for (var type in priorities) {
+                    var options = _.filter(destinations, function(dest) {
+                        if (dest.structureType == type) {
+                            return !dest.energyCapacity ||
+                                dest.energy < dest.energyCapacity;
+                        }
+                        return false;
+                    });
+                    options = _.sortBy(options, function(dest) {
+                        var obj = Game.getObjectById(dest);
+                        return -creep.pos.getRangeTo(obj);
+                    });
+                    if (options.length) {
+                        target = options[0];
                         break;
-                    } else if (dest instanceof StructureTower &&
-                            dest.energy < dest.energyCapacity) {
-                        target = base;
-                        break;
-                    } else if (dest instanceof StructureSpawn &&
-                            dest.energy < dest.energyCapacity) {
-                        target = base;
-                    } else if (dest instanceof StructureContainer &&
-                            dest.store < dest.storeCapacity) {
-                        target = base;
-                    } else if (dest instanceof StructureController && !target) {
-                        target = base;
                     }
                 }
                 if (target) {
@@ -95,6 +100,17 @@ var harvester = {
                 }
             }
         }
+    },
+
+    getBuildSpec: function(counts) {
+        return {
+            name: 'harvester',
+            count: (counts['builder'] < 3 || counts['guard'] < 1) ? 3 : 8,
+            body: {
+                required: [WORK, MOVE, CARRY],
+                optional: [WORK, WORK, CARRY],
+            },
+        };
     },
 };
 

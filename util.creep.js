@@ -1,5 +1,6 @@
 var find = require('util.find');
 var idle = require('util.idle');
+var contract = require('util.contract');
 
 /**
  * Generic framework for creep targetting, pathfinding, and actions.
@@ -194,6 +195,35 @@ var creeputil = {
         creep.memory.target = null;
         creep.memory.targetSpec = null;
         creep.memory.path = null;
+    },
+
+    /**
+     * Get a promise for a resource from a structure or creep.
+     * TODO: From creeps, maybe?
+     *
+     * @param {!Creep} creep
+     * @param {string} resource A RESOURCE_* constant
+     * @param {number} amount
+     * @return {?contract}
+     */
+    getResourcePromise: function(creep, resource, amount) {
+        var sources = creep.room.find(FIND_STRUCTURES);
+        sources = _.filter(sources, function(source) {
+            if (source.structureType == STRUCTURE_CONTAINER &&
+                    source.store[resource] >= amount) {
+                var promised = contract.getPromised(source, resource);
+                return source.store[resource] - promised >= amount;
+            }
+            return false;
+        });
+        if (sources.length) {
+            sources = _.sortBy(sources, function(source) {
+                return creep.pos.getRangeTo(source);
+            });
+            var source = sources[0];
+            return contract.swear(source, creep, resource, amount);
+        }
+        return null;
     },
 
     DONE: 0,

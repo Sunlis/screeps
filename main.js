@@ -1,41 +1,32 @@
-var harvester = require('role.harvester');
-var builder = require('role.builder');
-var repair = require('role.repair');
-var guard = require('role.guard');
-var init = require('util.init');
-var roads = require('util.roads');
-var tower = require('structure.tower');
+var util = {};
+util.init = require('util.init');
+util.roads = require('util.roads');
+var roles = require('roles');
+var structure = {};
+structure.tower = require('structure.tower');
 
 module.exports.loop = function() {
-    init.init();
-    roads.monitor();
+    util.init.init();
+    util.roads.monitor();
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
         if (!creep.memory.role) {
             console.log('Creep', name ,'has no role!');
             continue;
         }
-       // var start = performance.now();
-        switch (creep.memory.role) {
-            case 'harvester':
-                harvester.run(creep); break;
-            case 'builder':
-                builder.run(creep); break;
-            case 'repair':
-                repair.run(creep); break;
-            case 'guard':
-                guard.run(creep); break;
-            default:
-                console.log('Unkown creep type:', creep.memory.role);
+        if (role[creep.memory.role]) {
+            role[creep.memory.role].run(creep);
+        } else {
+            console.log('Unknown creep type:', creep.memory.role);
         }
-        //console.log(creep.name, performance.now() - start);
     }
     for (var name in Game.structures) {
         var struct = Game.structures[name];
         var obj = Game.getObjectById(struct.id);
-        if (struct.structureType == STRUCTURE_TOWER && obj.my) {
-            tower.run(obj);
+        if (!obj.my) continue;
+        if (structure[struct.structureType]) {
+            structure[struct.structureType].run(obj);
         }
     }
-    roads.maybeBuild();
+    util.roads.maybeBuild();
 };

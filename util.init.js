@@ -1,9 +1,14 @@
 var find = require('util.find');
+var contract = require('util.contract');
+var role = require('role');
 
 var init = {
     init: function() {
         for(var name in Memory.creeps) {
             if(!Game.creeps[name]) {
+                if (Memory.creeps[name].promises) {
+                    contract.breakAll(Memory.creeps[name].promises);
+                }
                 delete Memory.creeps[name];
                 // console.log('Clearing non-existing creep memory:', name);
             }
@@ -11,56 +16,20 @@ var init = {
         init.checkSpawns();
     },
     checkSpawns: function() {
-        var roles = [
-            {
-                name: 'harvester',
-                count: 3,
-                body: {
-                    required: [WORK, MOVE, CARRY],
-                    optional: [WORK, MOVE, CARRY],
-                },
-            },
-            {
-                name: 'builder',
-                count: 3,
-                body: {
-                    required: [WORK, MOVE, CARRY],
-                    optional: [WORK, MOVE],
-                },
-            },
-            {
-                name: 'guard',
-                count: 2,
-                // 80 + 50 + 50 + 10 + 10 = 200
-                body: [ATTACK, MOVE, MOVE, TOUGH, TOUGH],
-            },
-            {
-                name: 'harvester',
-                count: 10,
-                body: {
-                    required: [WORK, MOVE, CARRY],
-                    optional: [WORK, MOVE, CARRY],
-                },
-            },
-            {
-                name: 'repair',
-                count: 2,
-                body: {
-                    required: [WORK, MOVE, CARRY],
-                    optional: [MOVE],
-                },
-            },
-        ];
-
         var counts = {};
+        for (var type in role) {
+            counts[type] = 0;
+        }
         _.forEach(Game.creeps, function(creep) {
-            if (counts[creep.memory.role]) counts[creep.memory.role]++;
-            else counts[creep.memory.role] = 1;
+            counts[creep.memory.role]++;
+        });
+
+        var roles = _.map(role, function(type) {
+            return type.getBuildSpec(counts);
         });
 
         for (var i in roles) {
             var role = roles[i];
-            if (!counts[role.name]) counts[role.name] = 0;
             if (counts[role.name] < role.count) {
                 var body = init.getBody_(Game.spawns.Spawn1, role);
                 var num = 1;
@@ -90,7 +59,9 @@ var init = {
         return body;
     },
     creepCost_: function(body) {
-        return _.reduce(body, function(sum, part) { return sum+BODYPART_COST[part]; }, 0);
+        return _.reduce(body, function(sum, part) {
+            return sum + BODYPART_COST[part];
+        }, 0);
     },
 };
 

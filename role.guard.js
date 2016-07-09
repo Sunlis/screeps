@@ -31,6 +31,17 @@ var guard = {
             return creeputil.DONE;
         }
     },
+
+    getBuildSpec: function(counts) {
+        return {
+            name: 'guard',
+            count: 1,
+            body: {
+                required: [ATTACK, MOVE],
+                optional: [MOVE, TOUGH, TOUGH],
+            },
+        };
+    },
 };
 
 module.exports = guard;

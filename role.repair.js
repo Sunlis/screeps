@@ -36,30 +36,6 @@ var repair = {
                     },
                     action: 'repair',
                 },
-                // {
-                //     find: FIND_STRUCTURES,
-                //     condition: function(target) {
-                //         if (target.structureType == STRUCTURE_ROAD) return false;
-                //         return creep.carry.energy > 0 && target.hits < target.hitsMax/10;
-                //     },
-                //     action: 'repair',
-                // },
-                // {
-                //     find: FIND_STRUCTURES,
-                //     condition: function(target) {
-                //         if (target.structureType == STRUCTURE_ROAD) return false;
-                //         return creep.carry.energy > 0 && target.hits < target.hitsMax/2;
-                //     },
-                //     action: 'repair',
-                // },
-                // {
-                //     find: FIND_STRUCTURES,
-                //     condition: function(target) {
-                //         if (target.structureType == STRUCTURE_ROAD) return false;
-                //         return creep.carry.energy > 0 && target.hits < target.hitsMax;
-                //     },
-                //     action: 'repair',
-                // },
             ]
         }, repair);
     },
@@ -80,6 +56,17 @@ var repair = {
         if (target.hits == target.hitsMax || creep.carry.energy == 0) {
             return creeputil.DONE;
         }
+    },
+
+    getBuildSpec: function(counts) {
+        return {
+            name: 'repair',
+            count: 1,
+            body: {
+                required: [WORK, MOVE, CARRY],
+                optional: [MOVE],
+            },
+        };
     },
 };
 

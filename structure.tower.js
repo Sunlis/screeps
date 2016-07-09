@@ -25,10 +25,13 @@ var tower = {
   },
   healFriendly: function(tow) {
     var targets = tow.room.find(FIND_MY_CREEPS);
+    targets = _.filter(targets, function(creep) {
+        return creep.hits < creep.hitsMax;
+    });
     targets = _.sortBy(targets, function(creep) {
       return creep.hits;
     });
-    if (targets.length) {
+    if (targets.length && targets[0].hits < targets[0].hitsMax) {
       tow.heal(targets[0]);
       return true;
     }
@@ -36,10 +39,13 @@ var tower = {
   },
   repairFriendly: function(tow) {
     var targets = tow.room.find(FIND_STRUCTURES);
+    targets = _.filter(targets, function(structure) {
+        return structure.hits < structure.hitsMax;
+    });
     targets = _.sortBy(targets, function(structure) {
       return structure.hits;
     });
-    if (targets.length) {
+    if (targets.length && targets[0].hits < targets[0].hitsMax) {
       tow.repair(targets[0]);
       return true;
     }

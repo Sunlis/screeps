@@ -1,7 +1,10 @@
 
 var tower = {
   run: function(tow) {
-    return tower.attackHostile(tow) || tower.healFriendly(tow) || tower.repairFriendly(tow);
+    return tow.energy < 10 ||
+      tower.attackHostile(tow) ||
+      tower.healFriendly(tow) ||
+      tower.repairFriendly(tow);
   },
   attackHostile: function(tow) {
     var hostile = [

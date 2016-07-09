@@ -40,7 +40,7 @@ var tower = {
       return structure.hits;
     });
     if (targets.length) {
-      tow.repair(targets[0);
+      tow.repair(targets[0]);
       return true;
     }
     return false;

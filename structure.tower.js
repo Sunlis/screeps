@@ -43,7 +43,8 @@ var tower = {
   repairFriendly: function(tow) {
     var targets = tow.room.find(FIND_STRUCTURES);
     targets = _.filter(targets, function(structure) {
-        return structure.hits < structure.hitsMax;
+        return structure.structureType != STRUCTURE_ROAD &&
+          structure.hits < structure.hitsMax;
     });
     targets = _.sortBy(targets, function(structure) {
       return structure.hits;

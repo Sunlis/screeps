@@ -63,9 +63,10 @@ var builder = {
         } else {
             target = [
                 {
-                    find: FIND_SOURCES,
+                    find: FIND_STRUCTURES,
                     condition: function(target) {
-                        return target.energy > 0;
+                        return target.structureType == STRUCTURE_CONTAINER &&
+                            target.store.energy > 0;
                     },
                     sort: function(target) {
                         return creep.pos.getRangeTo(target);
@@ -105,7 +106,8 @@ var builder = {
      * @return {number} A constant from util.creep (eg. DONE, ERROR)
      */
     harvest: function(creep, target, spec) {
-        var result = builder.checkResult_(creep.harvest(target));
+        var result = builder.checkResult_(
+            creep.withdraw(target, RESOURCE_ENERGY));
         if (result) return result;
 
         if (creep.carry.energy == creep.carryCapacity || target.energy == 0) {
@@ -139,7 +141,7 @@ var builder = {
     getBuildSpec: function(counts) {
         return {
             name: 'builder',
-            count: 3,
+            count: 2,
             body: {
                 required: [WORK, MOVE, CARRY],
                 optional: [WORK, MOVE],

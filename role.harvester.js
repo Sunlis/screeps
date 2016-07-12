@@ -14,6 +14,7 @@ var harvester = {
             if (creep.carry.energy == 0) {
                 var sources = creep.room.find(FIND_SOURCES);
                 var target = _.reduce(creep.room.find(FIND_SOURCES), function(result, source) {
+                    if (source.energy == 0) return result;
                     if (!result) return source;
                     if (creep.pos.getRangeTo(source) < creep.pos.getRangeTo(result)) {
                         return source;
@@ -28,19 +29,23 @@ var harvester = {
                 var target;
                 var destinations = creep.room.find(FIND_STRUCTURES);
                 var priorities = {};
-                priorities[STRUCTURE_EXTENSION] = 0;
-                priorities[STRUCTURE_TOWER] = 1;
+                priorities[STRUCTURE_CONTAINER] = 0;
+                priorities[STRUCTURE_EXTENSION] = 1;
                 priorities[STRUCTURE_SPAWN] = 2;
-                priorities[STRUCTURE_CONTAINER] = 3;
-                priorities[STRUCTURE_CONTROLLER] = 4;
+                priorities[STRUCTURE_CONTROLLER] = 3;
+                priorities[STRUCTURE_TOWER] = 4;
                 destinations = _.sortBy(destinations, function(dest) {
                     return priorities[dest.structureType];
                 });
                 for (var type in priorities) {
                     var options = _.filter(destinations, function(dest) {
                         if (dest.structureType == type) {
-                            return !dest.energyCapacity ||
-                                dest.energy < dest.energyCapacity;
+                            if (type == STRUCTURE_CONTAINER) {
+                                return _.sum(dest.store) < dest.storeCapacity;
+                            } else {
+                                return !dest.energyCapacity ||
+                                    dest.energy < dest.energyCapacity;
+                            }
                         }
                         return false;
                     });
@@ -88,11 +93,7 @@ var harvester = {
                     creep.memory.path = null;
                 }
             } else if (target instanceof Structure) {
-                var amount = creep.carry.energy;
-                if (target.energyCapacity && target.energyCapacity - target.energy < amount) {
-                    amount = target.energyCapacity - target.energy;
-                }
-                var result = creep.transfer(target, RESOURCE_ENERGY, amount);
+                var result = creep.transfer(target, RESOURCE_ENERGY);
                 if (result != OK || creep.carry.energy == 0 ||
                         (target.energyCapacity && target.energy == target.energyCapacity)) {
                     creep.memory.target = null;
@@ -105,7 +106,7 @@ var harvester = {
     getBuildSpec: function(counts) {
         return {
             name: 'harvester',
-            count: (counts['builder'] < 3 || counts['guard'] < 1) ? 3 : 8,
+            count: (counts['builder'] < 3 || counts['guard'] < 1) ? 2 : 6,
             body: {
                 required: [WORK, MOVE, CARRY],
                 optional: [WORK, WORK, CARRY],

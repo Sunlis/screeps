@@ -218,12 +218,78 @@ var creeputil = {
         });
         if (sources.length) {
             sources = _.sortBy(sources, function(source) {
-                return creep.pos.getRangeTo(source);
+                return -creep.pos.getRangeTo(source);
             });
             var source = sources[0];
             return contract.swear(source, creep, resource, amount);
         }
         return null;
+    },
+
+    /**
+     * Offer a resource to a structure.
+     *
+     * @param {!Creep} creep
+     * @param {string} resource A RESOURCE_* constant
+     * @param {number} amount
+     * @return {?contract}
+     */
+    offerResource: function(creep, resource, amount) {
+        var targetPriorities = {};
+        targetPriorities[STRUCTURE_EXTENSION] = 0;
+        targetPriorities[STRUCTURE_SPAWN] = 1;
+        targetPriorities[STRUCTURE_TOWER] = 2;
+        targetPriorities[STRUCTURE_CONTROLLER] = 3;
+        targetPriorities[STRUCTURE_CONTAINER] = 4;
+
+        var targets = creep.room.find(FIND_STRUCTURES);
+        for (var type in targetPriorities) {
+            var options = _.filter(targets, function(target) {
+                return target.structureType == type &&
+                    creeputil.roomForResource_(target, resource, amount);
+            });
+            options = _.sortBy(options, function(target) {
+                return creep.pos.getRangeTo(target);
+            });
+            if (options.length) {
+                return contract.swear(creep, options[0], resource, amount);
+            }
+        }
+        // targets = _.filter(targets, function(target) {
+        //     if (!creeputil.roomForResource_(target, resource, amount)) {
+        //         return false;
+        //     }
+        //     if (targetPriorities[target.structureType] == undefined) {
+        //         return false;
+        //     }
+        //     return true;
+        // });
+        // targets = _.sortBy(targets, function(target) {
+        //     return targetPriorities[target.structureType];
+        // });
+        // if (targets.length) {
+        //     var target = targets[0];
+        //     return contract.swear(creep, target, resource, amount);
+        // }
+        return null;
+    },
+
+    roomForResource_: function(target, resource, amount) {
+        var promised = contract.getPromised(target);
+        switch (target.structureType) {
+            case STRUCTURE_CONTAINER:
+                var total = _.sum(target.store) + contract.getPromised(target);
+                return total < target.storeCapacity;
+            case STRUCTURE_SPAWN:
+            case STRUCTURE_EXTENSION:
+            case STRUCTURE_TOWER:
+                return resource == RESOURCE_ENERGY &&
+                    target.energy < target.energyCapacity;
+            case STRUCTURE_CONTROLLER:
+                return resource == RESOURCE_ENERGY;
+            default:
+                return false;
+        }
     },
 
     DONE: 0,

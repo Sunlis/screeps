@@ -13,18 +13,19 @@ var harvester = {
             creep.memory.path = null;
             if (creep.carry.energy == 0) {
                 var sources = creep.room.find(FIND_SOURCES);
-                var target = _.reduce(creep.room.find(FIND_SOURCES), function(result, source) {
-                    if (source.energy == 0) return result;
-                    if (!result) return source;
-                    if (creep.pos.getRangeTo(source) < creep.pos.getRangeTo(result)) {
-                        return source;
-                    }
-                    return result;
-                }, null);
-                if (target) {
-                    creep.memory.target = target;
+                var num = parseInt(creep.name.split('_')[1], 10) % sources.length;
+                if (sources[num]) {
+                    creep.memory.target = sources[num];
                     return true;
                 }
+                // var target = _.reduce(creep.room.find(FIND_SOURCES), function(result, source) {
+                //     if (source.energy == 0) return result;
+                //     if (!result) return source;
+                //     if (creep.pos.getRangeTo(source) < creep.pos.getRangeTo(result)) {
+                //         return source;
+                //     }
+                //     return result;
+                // }, null);
             } else {
                 var target;
                 var destinations = creep.room.find(FIND_STRUCTURES);

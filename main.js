@@ -14,8 +14,8 @@ module.exports.loop = function() {
             console.log('Creep', name ,'has no role!');
             continue;
         }
-        if (role[creep.memory.role]) {
-            role[creep.memory.role].run(creep);
+        if (roles[creep.memory.role]) {
+            roles[creep.memory.role].run(creep);
         } else {
             console.log('Unknown creep type:', creep.memory.role);
         }

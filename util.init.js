@@ -24,7 +24,7 @@ var init = {
             counts[creep.memory.role]++;
         });
 
-        var roles = _.map(role, function(type) {
+        var roles = _.map(roles, function(type) {
             return type.getBuildSpec(counts);
         });
 

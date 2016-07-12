@@ -7,9 +7,11 @@ var repair = {
             //verbose: true,
             target: [
                 {
-                    find: FIND_SOURCES,
+                    find: FIND_STRUCTURES,
                     condition: function(target) {
-                        return creep.carry.energy < creep.carryCapacity;
+                        return target.structureType == STRUCTURE_CONTAINER &&
+                            target.store.energy > 0 &&
+                            creep.carry.energy < creep.carryCapacity;
                     },
                     action: 'harvest',
                 },

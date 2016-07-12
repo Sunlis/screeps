@@ -1,5 +1,6 @@
 var find = require('util.find');
 var idle = require('util.idle');
+var contract = require('util.contract');
 
 /**
  * Generic framework for creep targetting, pathfinding, and actions.
@@ -194,6 +195,101 @@ var creeputil = {
         creep.memory.target = null;
         creep.memory.targetSpec = null;
         creep.memory.path = null;
+    },
+
+    /**
+     * Get a promise for a resource from a structure or creep.
+     * TODO: From creeps, maybe?
+     *
+     * @param {!Creep} creep
+     * @param {string} resource A RESOURCE_* constant
+     * @param {number} amount
+     * @return {?contract}
+     */
+    getResourcePromise: function(creep, resource, amount) {
+        var sources = creep.room.find(FIND_STRUCTURES);
+        sources = _.filter(sources, function(source) {
+            if (source.structureType == STRUCTURE_CONTAINER &&
+                    source.store[resource] >= amount) {
+                var promised = contract.getPromised(source, resource);
+                return source.store[resource] - promised >= amount;
+            }
+            return false;
+        });
+        if (sources.length) {
+            sources = _.sortBy(sources, function(source) {
+                return -creep.pos.getRangeTo(source);
+            });
+            var source = sources[0];
+            return contract.swear(source, creep, resource, amount);
+        }
+        return null;
+    },
+
+    /**
+     * Offer a resource to a structure.
+     *
+     * @param {!Creep} creep
+     * @param {string} resource A RESOURCE_* constant
+     * @param {number} amount
+     * @return {?contract}
+     */
+    offerResource: function(creep, resource, amount) {
+        var targetPriorities = {};
+        targetPriorities[STRUCTURE_EXTENSION] = 0;
+        targetPriorities[STRUCTURE_SPAWN] = 1;
+        targetPriorities[STRUCTURE_TOWER] = 2;
+        targetPriorities[STRUCTURE_CONTROLLER] = 3;
+        targetPriorities[STRUCTURE_CONTAINER] = 4;
+
+        var targets = creep.room.find(FIND_STRUCTURES);
+        for (var type in targetPriorities) {
+            var options = _.filter(targets, function(target) {
+                return target.structureType == type &&
+                    creeputil.roomForResource_(target, resource, amount);
+            });
+            options = _.sortBy(options, function(target) {
+                return creep.pos.getRangeTo(target);
+            });
+            if (options.length) {
+                return contract.swear(creep, options[0], resource, amount);
+            }
+        }
+        // targets = _.filter(targets, function(target) {
+        //     if (!creeputil.roomForResource_(target, resource, amount)) {
+        //         return false;
+        //     }
+        //     if (targetPriorities[target.structureType] == undefined) {
+        //         return false;
+        //     }
+        //     return true;
+        // });
+        // targets = _.sortBy(targets, function(target) {
+        //     return targetPriorities[target.structureType];
+        // });
+        // if (targets.length) {
+        //     var target = targets[0];
+        //     return contract.swear(creep, target, resource, amount);
+        // }
+        return null;
+    },
+
+    roomForResource_: function(target, resource, amount) {
+        var promised = contract.getPromised(target);
+        switch (target.structureType) {
+            case STRUCTURE_CONTAINER:
+                var total = _.sum(target.store) + contract.getPromised(target);
+                return total < target.storeCapacity;
+            case STRUCTURE_SPAWN:
+            case STRUCTURE_EXTENSION:
+            case STRUCTURE_TOWER:
+                return resource == RESOURCE_ENERGY &&
+                    target.energy < target.energyCapacity;
+            case STRUCTURE_CONTROLLER:
+                return resource == RESOURCE_ENERGY;
+            default:
+                return false;
+        }
     },
 
     DONE: 0,

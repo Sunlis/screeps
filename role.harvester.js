@@ -18,14 +18,6 @@ var harvester = {
                     creep.memory.target = sources[num];
                     return true;
                 }
-                // var target = _.reduce(creep.room.find(FIND_SOURCES), function(result, source) {
-                //     if (source.energy == 0) return result;
-                //     if (!result) return source;
-                //     if (creep.pos.getRangeTo(source) < creep.pos.getRangeTo(result)) {
-                //         return source;
-                //     }
-                //     return result;
-                // }, null);
             } else {
                 var target;
                 var destinations = creep.room.find(FIND_STRUCTURES);

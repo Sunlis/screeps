@@ -106,7 +106,7 @@ var harvester = {
     getBuildSpec: function(counts) {
         return {
             name: 'harvester',
-            count: (counts['builder'] < 3 || counts['guard'] < 1) ? 2 : 6,
+            count: (counts['builder'] < 2 || counts['guard'] < 1) ? 2 : 6,
             body: {
                 required: [WORK, MOVE, CARRY],
                 optional: [WORK, WORK, CARRY],

@@ -17,19 +17,19 @@ var init = {
     },
     checkSpawns: function() {
         var counts = {};
-        for (var type in role) {
+        for (var type in roles) {
             counts[type] = 0;
         }
         _.forEach(Game.creeps, function(creep) {
             counts[creep.memory.role]++;
         });
 
-        var roles = _.map(roles, function(type) {
+        var types = _.map(roles, function(type) {
             return type.getBuildSpec(counts);
         });
 
-        for (var i in roles) {
-            var role = roles[i];
+        for (var i in types) {
+            var role = types[i];
             if (counts[role.name] < role.count) {
                 var body = init.getBody_(Game.spawns.Spawn1, role);
                 var num = 1;

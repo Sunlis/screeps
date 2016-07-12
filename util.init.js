@@ -1,6 +1,6 @@
 var find = require('util.find');
 var contract = require('util.contract');
-var role = require('role');
+var roles = require('roles');
 
 var init = {
     init: function() {

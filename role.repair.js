@@ -42,7 +42,7 @@ var repair = {
         }, repair);
     },
     harvest: function(creep, target, spec) {
-        var result = creep.harvest(target);
+        var result = creep.withdraw(target);
         if (result != OK) {
             return creeputil.ERROR;
         }

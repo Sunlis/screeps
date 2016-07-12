@@ -1,7 +1,7 @@
 var roads = {
 
     CACHE_LIMIT: 20,
-    CHECK_INTERVAL: 100,
+    CHECK_INTERVAL: 200,
     CLEAR_INTERVAL: 1000,
     MIN_COUNT: 3,
 

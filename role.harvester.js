@@ -43,8 +43,7 @@ var harvester = {
                         return false;
                     });
                     options = _.sortBy(options, function(dest) {
-                        var obj = Game.getObjectById(dest);
-                        return -creep.pos.getRangeTo(obj);
+                        return creep.pos.getRangeTo(dest);
                     });
                     if (options.length) {
                         target = options[0];

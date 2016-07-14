@@ -246,7 +246,7 @@ var creeputil = {
         for (var type in targetPriorities) {
             var options = _.filter(targets, function(target) {
                 var pass = (target.structureType == type &&
-                    creeputil.roomForResource_(target, resource, amount));
+                    creeputil.roomForResource_(target, resource, amount, true));
                 if (pass && target.structureType == STRUCTURE_TOWER) {
                     return target.energy < (target.energyCapacity / 2);
                 }
@@ -278,15 +278,19 @@ var creeputil = {
         return null;
     },
 
-    roomForResource_: function(target, resource, amount) {
+    roomForResource_: function(target, resource, amount, limitTowers) {
         var promised = contract.getPromised(target);
         switch (target.structureType) {
             case STRUCTURE_CONTAINER:
                 var total = _.sum(target.store) + contract.getPromised(target);
                 return total < target.storeCapacity;
+            case STRUCTURE_TOWER:
+                if (limitTowers) {
+                    return resource == RESOURCE_ENERGY &&
+                        target.energy < (target.energyCapacity / 2);
+                }
             case STRUCTURE_SPAWN:
             case STRUCTURE_EXTENSION:
-            case STRUCTURE_TOWER:
                 return resource == RESOURCE_ENERGY &&
                     target.energy < target.energyCapacity;
             case STRUCTURE_CONTROLLER:

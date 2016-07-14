@@ -245,8 +245,12 @@ var creeputil = {
         var targets = creep.room.find(FIND_STRUCTURES);
         for (var type in targetPriorities) {
             var options = _.filter(targets, function(target) {
-                return target.structureType == type &&
-                    creeputil.roomForResource_(target, resource, amount);
+                var pass = (target.structureType == type &&
+                    creeputil.roomForResource_(target, resource, amount));
+                if (pass && target.structureType == STRUCTURE_TOWER) {
+                    return target.energy < (target.energyCapacity / 2);
+                }
+                return pass;
             });
             options = _.sortBy(options, function(target) {
                 return creep.pos.getRangeTo(target);

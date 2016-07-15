@@ -10,7 +10,6 @@ var tanker = {
         creep.carry.energy == creep.carryCapacity) {
       creep.memory.state = 'deliver';
     }
-    debugger;
     var targets = [];
     if (creep.memory.state == 'fill') {
       if (!creep.memory.target) {
@@ -91,7 +90,7 @@ var tanker = {
   getBuildSpec: function() {
     return {
       name: 'tanker',
-      count: 4,
+      count: 6,
       body: {
         required: [WORK, MOVE, CARRY],
         optional: [WORK, MOVE, CARRY, CARRY],
